@@ -6,14 +6,14 @@ runner = "local:exec"
 
 [builders."docker:go"]
 enabled = true
-go_version = "1.14"
-module_path = "github.com/libp2p/test-plans/pubsub/test"
+go_version = "1.16"
+module_path = "github.com/manav2401/test-plans/pubsub/test"
 exec_pkg = "."
 go_ipfs_version = "0.4.22"
 
 [builders."exec:go"]
 enabled = true
-module_path = "github.com/libp2p/test-plans/pubsub/test"
+module_path = "github.com/manav2401/test-plans/pubsub/test"
 exec_pkg = "."
 
 [runners."local:docker"]
