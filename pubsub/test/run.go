@@ -20,6 +20,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/testground/sdk-go/network"
+	"github.com/testground/sdk-go/run"
 	"github.com/testground/sdk-go/runtime"
 	"github.com/testground/sdk-go/sync"
 )
@@ -53,7 +54,7 @@ type testInstance struct {
 	nodeIdx        int
 	latency        time.Duration
 	connsDef       *ConnectionsDef
-	client         *sync.Client
+	client         sync.Client
 	discovery      *SyncDiscovery
 	peerSubscriber *PeerSubscriber
 }
@@ -72,16 +73,17 @@ func createHost(ctx context.Context) (host.Host, error) {
 	}
 
 	// Don't listen yet, we need to set up networking first
-	return libp2p.New(ctx, libp2p.Identity(priv), libp2p.NoListenAddrs)
+	// return libp2p.New(ctx, libp2p.Identity(priv), libp2p.NoListenAddrs)
+	return libp2p.New(libp2p.Identity(priv), libp2p.NoListenAddrs)
 }
 
-func RunSimulation(runenv *runtime.RunEnv) error {
+func RunSimulation(runenv *runtime.RunEnv, initCtx *run.InitContext) error {
 	params := parseParams(runenv)
 
 	totalTime := params.setup + params.runtime + params.warmup + params.cooldown
 	ctx, cancel := context.WithTimeout(context.Background(), totalTime)
 	defer cancel()
-	client := sync.MustBoundClient(ctx, runenv)
+	client := initCtx.SyncClient
 	defer client.Close()
 
 	// Create the hosts, but don't listen yet (we need to set up the data
@@ -194,7 +196,7 @@ func RunSimulation(runenv *runtime.RunEnv) error {
 	return errgrp.Wait()
 }
 
-func getNodeTypeSeqNum(ctx context.Context, client *sync.Client, h host.Host, nodeType NodeType) (int64, error) {
+func getNodeTypeSeqNum(ctx context.Context, client sync.Client, h host.Host, nodeType NodeType) (int64, error) {
 	topic := sync.NewTopic("node-type-"+string(nodeType), &peer.AddrInfo{})
 	return client.Publish(ctx, topic, host.InfoFromHost(h))
 }
