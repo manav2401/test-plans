@@ -74,7 +74,7 @@ func createHost(ctx context.Context) (host.Host, error) {
 
 	// Don't listen yet, we need to set up networking first
 	// return libp2p.New(ctx, libp2p.Identity(priv), libp2p.NoListenAddrs)
-	return libp2p.New(libp2p.Identity(priv), libp2p.NoListenAddrs)
+	return libp2p.New(ctx, libp2p.Identity(priv), libp2p.NoListenAddrs)
 }
 
 func RunSimulation(runenv *runtime.RunEnv, initCtx *run.InitContext) error {
