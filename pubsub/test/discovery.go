@@ -68,6 +68,7 @@ type RandomTopology struct {
 }
 
 func (t RandomTopology) SelectPeers(local peer.ID, remote []PeerRegistration) []PeerRegistration {
+	fmt.Println("remote: ", remote, "t.count", t.Count)
 	if len(remote) == 0 || t.Count == 0 {
 		return []PeerRegistration{}
 	}
@@ -311,6 +312,10 @@ func (s *SyncDiscovery) ConnectTopology(ctx context.Context, delay time.Duration
 		s.runenv.RecordMessage("connecting to peers after %s", delay)
 	}
 
+	s.runenv.RecordMessage("iterating over %d peers", len(s.allPeers))
+	for i := 0; i < len(s.allPeers); i++ {
+		s.runenv.RecordMessage("peers[%d]: %s", i, s.allPeers[i].Info.ID.String())
+	}
 	selected := s.topology.SelectPeers(s.h.ID(), s.allPeers)
 	if len(selected) == 0 {
 		panic("topology selected zero peers. so lonely!!!")
