@@ -209,10 +209,13 @@ func (t *testInstance) startPubsubNode(ctx context.Context) error {
 	// the total message rate for each topic. For now, we distribute the
 	// publish rates uniformly across the number of instances in our
 	// testground composition
+	t.RecordMessage("number of topics-%d", len(t.params.topics))
+	t.RecordMessage("is publisher-%t", t.params.publisher)
 	topics := make([]TopicConfig, len(t.params.topics))
 	if t.params.publisher {
 		// FIXME: this assumes all publishers are in the same group, might not always hold up.
 		nPublishers := t.TestGroupInstanceCount
+		t.RecordMessage("number of publishers-%d", nPublishers)
 		for i, topic := range t.params.topics {
 			topics[i] = topic
 			topics[i].MessageRate.Quantity /= float64(nPublishers)

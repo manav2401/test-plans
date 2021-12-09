@@ -160,6 +160,7 @@ func (p *PubsubNode) Run(runtime time.Duration, waitForReadyStateThenConnectAsyn
 
 	// ensure we have at least enough peers to fill a mesh after warmup period
 	npeers := len(p.h.Network().Peers())
+	p.runenv.RecordMessage("Number of peers in mesh-%d", npeers)
 	if npeers < pubsub.GossipSubD {
 		panic(fmt.Errorf("not enough peers after warmup period. Need at least D=%d, have %d", pubsub.GossipSubD, npeers))
 	}
@@ -173,6 +174,7 @@ func (p *PubsubNode) Run(runtime time.Duration, waitForReadyStateThenConnectAsyn
 	}
 
 	// if we're publishing, wait until we've sent all our messages or the context expires
+	p.runenv.RecordMessage("Are we publishing? %t", p.cfg.Publisher)
 	if p.cfg.Publisher {
 		donech := make(chan struct{}, 1)
 		go func() {

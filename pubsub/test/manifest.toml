@@ -50,8 +50,8 @@ instances = { min = 1, max = 2000, default = 10 }
   bandwidth_mb = { type = "int", desc = "Bandwidth in MiB", default=10240 }
   topology = { type = "string", desc = "topology in json format" }
   degree = { type = "int", desc = "the number of nodes to connect to", default=20 }
-  n_container_nodes_total = { type = "int", desc = "the number of total nodes including multiple nodes per container", default=1 }
-  n_nodes_per_container = { type = "int", desc = "the number of nodes to start up in each container", default=1 }
+  n_container_nodes_total = { type = "int", desc = "the number of total nodes including multiple nodes per container", default=12 }
+  n_nodes_per_container = { type = "int", desc = "the number of nodes to start up in each container", default=6 }
 
   ## pubsub node config
   publisher = { type = "bool", desc = "if true, this instance should publish to subscribed topics instead of lurking", default=false }
