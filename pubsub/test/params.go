@@ -30,6 +30,8 @@ type HeartbeatParams struct {
 
 type NetworkParams struct {
 	latency     time.Duration
+	latency1    time.Duration
+	latency2    time.Duration
 	latencyMax  time.Duration
 	jitterPct   int
 	bandwidthMB int
@@ -88,7 +90,6 @@ type TopicScoreParams struct {
 	InvalidMessageDeliveriesWeight, InvalidMessageDeliveriesDecay float64
 }
 
-
 type testParams struct {
 	heartbeat HeartbeatParams
 	setup     time.Duration
@@ -140,6 +141,8 @@ func parseDuration(val string) time.Duration {
 func parseParams(runenv *runtime.RunEnv) testParams {
 	np := NetworkParams{
 		latency:     durationParam(runenv, "t_latency"),
+		latency1:    durationParam(runenv, "t_latency_1"),
+		latency2:    durationParam(runenv, "t_latency_2"),
 		latencyMax:  durationParam(runenv, "t_latency_max"),
 		jitterPct:   runenv.IntParam("jitter_pct"),
 		bandwidthMB: runenv.IntParam("bandwidth_mb"),

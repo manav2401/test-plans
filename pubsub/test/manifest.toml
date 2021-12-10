@@ -53,6 +53,10 @@ instances = { min = 1, max = 2000, default = 10 }
   n_container_nodes_total = { type = "int", desc = "the number of total nodes including multiple nodes per container", default=12 }
   n_nodes_per_container = { type = "int", desc = "the number of nodes to start up in each container", default=6 }
 
+  # Custom params for 2 instances
+  t_latency_1 = { type = "duration", desc = "Network latency between nodes", default="10ms" }
+  t_latency_2 = { type = "duration", desc = "Network latency between nodes", default="15ms" }
+
   ## pubsub node config
   publisher = { type = "bool", desc = "if true, this instance should publish to subscribed topics instead of lurking", default=false }
   flood_publishing = { type = "bool", desc = "if true, nodes will flood when publishing their own messages. only applies to hardening branch", default=false }

@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/testground/sdk-go/network"
+	"github.com/testground/sdk-go/run"
 	"github.com/testground/sdk-go/runtime"
 )
 
 // setupNetwork instructs the sidecar (if enabled) to setup the network for this
 // test case.
-func setupNetwork(ctx context.Context, runenv *runtime.RunEnv, netParams NetworkParams, netclient *network.Client) error {
+func setupNetwork(ctx context.Context, instanceContext *run.InitContext, runenv *runtime.RunEnv, netParams NetworkParams, netclient *network.Client) error {
 	if !runenv.TestSidecar {
 		return nil
 	}
@@ -25,11 +26,18 @@ func setupNetwork(ctx context.Context, runenv *runtime.RunEnv, netParams Network
 	runenv.RecordMessage("Network init complete")
 
 	latency := netParams.latency
-	if netParams.latencyMax > 0 {
-		// If a maximum latency is supplied, choose a random latency between
-		// latency and max latency
-		latency += time.Duration(rand.Float64() * float64(netParams.latencyMax-latency))
+	if instanceContext.GlobalSeq == 1 {
+		latency = netParams.latency1
+	} else {
+		latency = netParams.latency2
 	}
+	runenv.RecordMessage("Setting latency for instance-%d to %d", instanceContext.GlobalSeq, latency)
+	// ignore for now
+	// if netParams.latencyMax > 0 {
+	// 	// If a maximum latency is supplied, choose a random latency between
+	// 	// latency and max latency
+	// 	latency += time.Duration(rand.Float64() * float64(netParams.latencyMax-latency))
+	// }
 
 	config := &network.Config{
 		Network: "default",

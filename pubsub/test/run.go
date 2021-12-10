@@ -135,7 +135,7 @@ func RunSimulation(runenv *runtime.RunEnv, initCtx *run.InitContext) error {
 	netclient := network.NewClient(client, runenv)
 
 	// Set up traffic shaping. Note: this is the same for all nodes in the same container.
-	if err := setupNetwork(ctx, runenv, params.netParams, netclient); err != nil {
+	if err := setupNetwork(ctx, initCtx, runenv, params.netParams, netclient); err != nil {
 		return fmt.Errorf("Failed to set up network: %w", err)
 	}
 
