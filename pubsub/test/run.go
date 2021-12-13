@@ -80,6 +80,13 @@ func createHost(ctx context.Context) (host.Host, error) {
 func RunSimulation(runenv *runtime.RunEnv, initCtx *run.InitContext) error {
 	params := parseParams(runenv)
 
+	// only set the peers of 1st container as publisher
+	if initCtx.GlobalSeq == 1 {
+		params.publisher = true
+	} else {
+		params.publisher = false
+	}
+
 	totalTime := params.setup + params.runtime + params.warmup + params.cooldown
 	ctx, cancel := context.WithTimeout(context.Background(), totalTime)
 	defer cancel()

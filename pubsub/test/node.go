@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
+	"strconv"
 	"sync"
 	"time"
 
@@ -146,6 +146,7 @@ func (p *PubsubNode) Run(runtime time.Duration, waitForReadyStateThenConnectAsyn
 
 	// join initial topics
 	p.runenv.RecordMessage("Joining initial topics")
+	p.runenv.RecordMessage("Number of Topics: %d", len(p.cfg.Topics))
 	for _, t := range p.cfg.Topics {
 		go p.joinTopic(t, runtime)
 	}
@@ -265,19 +266,22 @@ func (p *PubsubNode) makeMessage(seq int64, size uint64) ([]byte, error) {
 		seq    int64
 		data   []byte
 	}
-	data := make([]byte, size)
-	rand.Read(data)
+	data := []byte(strconv.Itoa(int(time.Now().Unix())))
 	m := msg{sender: p.h.ID().Pretty(), seq: seq, data: data}
+	p.log("sending message from %s with seq %d: %s", m.sender, m.seq, string(m.data))
 	return json.Marshal(m)
 }
 
 func (p *PubsubNode) sendMsg(seq int64, ts *topicState) {
-	msg, err := p.makeMessage(seq, uint64(ts.cfg.MessageSize))
-	if err != nil {
-		p.log("error making message for topic %s: %s", ts.cfg.Id, err)
-		return
-	}
-	err = ts.topic.Publish(p.ctx, msg)
+	/*
+		msg, err := p.makeMessage(seq, uint64(ts.cfg.MessageSize))
+		if err != nil {
+			p.log("error making message for topic %s: %s", ts.cfg.Id, err)
+			return
+		}
+	*/
+	msg := []byte(strconv.Itoa(int(time.Now().Unix())))
+	err := ts.topic.Publish(p.ctx, msg)
 	if err != nil && err != context.Canceled {
 		p.log("error publishing to %s: %s", ts.cfg.Id, err)
 		return
@@ -307,13 +311,18 @@ func (p *PubsubNode) publishLoop(ts *topicState) {
 
 func (p *PubsubNode) consumeTopic(ts *topicState) {
 	for {
-		_, err := ts.sub.Next(p.ctx)
+		msg, err := ts.sub.Next(p.ctx)
 		if err != nil && err != context.Canceled {
 			p.log("error reading from %s: %s", ts.cfg.Id, err)
 			return
 		}
-		//p.log("got message on topic %s from %s\n", ts.cfg.Id, msg.ReceivedFrom.Pretty())
-
+		now := time.Now().Unix()
+		sent, _ := strconv.Atoi(string(msg.Data))
+		p.log("received message: %s", string(msg.Data))
+		p.log("now: %d, sent: %d, elapsed: %s", now, sent, time.Duration(now-int64(sent))*time.Millisecond)
+		//p.log("Received message: %s", string(msg.Data))
+		//p.log("msg.Message.String(): %s", msg.Message.String())
+		//p.log("msg.String(): %s", msg.String())
 		select {
 		case <-ts.done:
 			return

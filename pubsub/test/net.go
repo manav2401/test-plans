@@ -58,6 +58,6 @@ func setupNetwork(ctx context.Context, instanceContext *run.InitContext, runenv 
 		return err
 	}
 
-	runenv.RecordMessage("egress: %s latency (%d%% jitter) and %dMB bandwidth", netParams.latency, netParams.jitterPct, netParams.bandwidthMB)
+	runenv.RecordMessage("egress: %s latency (%d%% jitter) and %dMB bandwidth", latency, netParams.jitterPct, netParams.bandwidthMB)
 	return nil
 }

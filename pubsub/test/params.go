@@ -127,6 +127,7 @@ func durationParam(runenv *runtime.RunEnv, name string) time.Duration {
 		runenv.RecordMessage("duration param %s not set, defaulting to zero", name)
 		return 0
 	}
+	runenv.RecordMessage("duration param %s set to %s", name, runenv.StringParam(name))
 	return parseDuration(runenv.StringParam(name))
 }
 
